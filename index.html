@@ -44,7 +44,7 @@ label{display:grid;gap:6px;color:var(--m);font-size:13px}input,textarea{width:10
 <label style="margin-top:12px">Reflexión<textarea id="reflection" placeholder="¿Cómo te has sentido hoy?"></textarea></label></div></section>
 
 <section id="settings" class="screen"><div class="card"><h2>Ajustes y copia</h2><p class="sub">Tus datos se guardan en este navegador.</p>
-<div class="buttons"><button id="export" class="btn primary">Exportar datos</button><label class="btn" for="import">Importar datos</label><input id="import" type="file" accept="application/json" hidden><button id="clear" class="btn danger">Borrar todo</button></div>
+<div class="buttons"><button id="exportData" class="btn primary">Exportar datos</button><label class="btn" for="importData">Importar datos</label><input id="importData" type="file" accept="application/json" hidden><button id="clear" class="btn danger">Borrar todo</button></div>
 <p class="sub" style="margin-top:14px">Más adelante conectaremos una base de datos para sincronizar entre dispositivos.</p></div></section>
 </main>
 <nav class="nav"><button class="on" data-screen="home">⌂<br>Inicio</button><button data-screen="workout">🏋️<br>Ejercicio</button><button data-screen="habits">✓<br>Hábitos</button><button data-screen="settings">⚙️<br>Ajustes</button></nav>
@@ -63,8 +63,8 @@ function dash(){let t=ex[s.day].length,d=ex[s.day].filter((_,i)=>s.checks[s.day]
 ["rowKg","rowReps","pushups","plank","squat","lunges"].forEach(id=>{let e=document.getElementById(id);e.value=s.prog[id]??"";e.oninput=()=>{s.prog[id]=e.value;save()}});
 ["sleep","water","steps","mood","stress","energy","reflection"].forEach(id=>{let e=document.getElementById(id);e.value=s.daily[today][id]??"";e.oninput=()=>{s.daily[today][id]=e.value;save()}});
 let total=80,left=80,int=null;const draw=()=>timer.textContent=String(Math.floor(left/60)).padStart(2,"0")+":"+String(left%60).padStart(2,"0");document.querySelectorAll(".preset").forEach(b=>b.onclick=()=>{clearInterval(int);int=null;total=left=+b.dataset.s;draw()});start.onclick=()=>{if(int)return;if(left<=0)left=total;int=setInterval(()=>{left--;draw();if(left<=0){clearInterval(int);int=null;navigator.vibrate?.([200,100,200]);alert("¡Tiempo completado!")}},1000)};pause.onclick=()=>{clearInterval(int);int=null};reset.onclick=()=>{clearInterval(int);int=null;left=total;draw()};
-export.onclick=()=>{let a=document.createElement("a"),u=URL.createObjectURL(new Blob([JSON.stringify(s,null,2)],{type:"application/json"}));a.href=u;a.download=`vida-sana-${today}.json`;a.click();URL.revokeObjectURL(u)};
-import.onchange=async e=>{try{s=JSON.parse(await e.target.files[0].text());save();location.reload()}catch{alert("Archivo no válido")}};
+document.getElementById("exportData").onclick=()=>{let a=document.createElement("a"),u=URL.createObjectURL(new Blob([JSON.stringify(s,null,2)],{type:"application/json"}));a.href=u;a.download=`vida-sana-${today}.json`;a.click();URL.revokeObjectURL(u)};
+document.getElementById("importData").onchange=async e=>{try{s=JSON.parse(await e.target.files[0].text());save();location.reload()}catch{alert("Archivo no válido")}};
 clear.onclick=()=>{if(confirm("¿Borrar todos los datos?")){localStorage.removeItem(K);location.reload()}};
 date.textContent=new Intl.DateTimeFormat("es-ES",{weekday:"long",day:"numeric",month:"long"}).format(new Date());render();dash();draw();if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("service-worker.js"));
 </script></body></html>
